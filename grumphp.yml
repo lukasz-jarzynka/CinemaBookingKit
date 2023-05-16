@@ -3,3 +3,10 @@ grumphp:
         phpcs:
             standard: PSR12
             triggered_by: [php]
+        phpunit:
+            config_file: ~
+            testsuite: ~
+            group: []
+            exclude_group: []
+            always_execute: false
+            order: null
