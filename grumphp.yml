@@ -1,0 +1,5 @@
+grumphp:
+    tasks:
+        phpcs:
+            standard: PSR12
+            triggered_by: [php]
