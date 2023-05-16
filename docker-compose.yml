@@ -37,24 +37,21 @@ services:
       - app
 
   database:
-    image: postgres:${POSTGRES_VERSION:-14}-alpine
+    image: postgres:latest
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-test}
-      POSTGRES_USER: ${POSTGRES_USER:-test}
+      POSTGRES_DB: cinema
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: secret
     expose:
       - 5432
     volumes:
-      - db-data:/var/lib/postgresql/data:rw
+      - db-data:/var/lib/postgresql/data_new:rw
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
     networks:
       - sf-net
     ports:
-      - "19193:5432"
+      - "5432:5432"
 
   redis:
     image: redis:6.2
