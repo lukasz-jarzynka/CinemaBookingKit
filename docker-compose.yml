@@ -56,12 +56,60 @@ services:
   redis:
     image: redis:6.2
     ports:
-      - 6379:6379
+      - "6379:6379"
 
   mailhog:
     image: mailhog/mailhog:latest
     ports:
-      - 8025:8025
+      - "8025:8025"
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: "docker.elastic.co/elasticsearch/elasticsearch:7.12.0"
+    environment:
+      - "discovery.type=single-node"
+      - "bootstrap.memory_lock=true"
+      - "ES_JAVA_OPTS=-Xms1G -Xmx1G"
+      - "xpack.security.enabled=false"
+      - "http.cors.enabled=true"
+      - "http.cors.allow-origin=*"
+    ports:
+      - "9201:9200"
+    volumes:
+      - elastic_volume:/usr/share/elasticsearch/data
+
+    #gather all logs from different sources and pass them to elastic-search in a proper format
+  logstash_cont:
+    container_name: logstash_cont
+    build: ./.docker/logstash
+    #ports:
+    #  - 5041:5044
+    depends_on:
+      - elasticsearch
+
+    #keep track of the symfony log file and send it to elastic search
+  filebeats_cont:
+    container_name: filebeats_cont
+    build: ./.docker/filebeats
+    volumes:
+      - ./var/log:/var/log/symfony
+    depends_on:
+      - logstash_cont
+
+  kibana_cont:
+    image: docker.elastic.co/kibana/kibana:7.12.0
+    container_name: kibana_cont
+    ports:
+      - "5602:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
 
 networks:
   sf-net:
@@ -70,3 +118,4 @@ volumes:
   ###> doctrine/doctrine-bundle ###
   db-data:
 ###< doctrine/doctrine-bundle ###
+  elastic_volume:

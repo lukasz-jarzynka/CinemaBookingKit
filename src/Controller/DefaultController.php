@@ -12,7 +12,7 @@ class DefaultController extends AbstractController
     #[Route('/index')]
     public function index(LoggerInterface $logger): Response
     {
-        $logger->error('We are logging!');
+        $logger->info('Test Test');
 
         return $this->render('base.html.twig');
     }

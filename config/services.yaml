@@ -22,3 +22,16 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    #ELASTIC SEARCH CLIENT
+    Elasticsearch\Client:
+        factory: [ 'Elasticsearch\ClientBuilder', 'fromConfig' ]
+        arguments: [ '%es_config%' ]
+
+    Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler:
+        arguments:
+            $endpoint: '%env(ELASTIC_URL)%'
+
+    Monolog\Formatter\LogstashFormatter:
+        arguments:
+            $applicationName: 'symfony-elastic-stack'
