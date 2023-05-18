@@ -110,6 +110,11 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - sf-net
 
 networks:
   sf-net:
